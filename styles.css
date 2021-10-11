@@ -1,0 +1,30 @@
+.calculator {
+    width: 800px;
+    background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    margin: 100px auto;
+    font-size: 1.6rem;
+}
+
+.display {
+    text-align: right;
+    height: 40px;
+    padding: 20px;
+}
+
+.keys {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.key {
+    flex-basis: 200px;
+    padding: 20px;
+    text-align: center;
+    font-size: inherit;
+}
+
+.equal {
+    flex-basis: 600px;
+}
