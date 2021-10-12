@@ -93,6 +93,37 @@ function equal(total) {
     firstValue = 0;
 }
 
+function percentage() {
+    if (tempValue === 0) {
+        display.textContent = 0;
+    }
+
+    else {
+        tempValue /= 100;
+        display.textContent = tempValue;
+        return tempValue;
+    }
+}
+
+function clear() {
+    firstValue = 0;
+    tempValue = 0;
+    operatorSymbol = "";
+    display.textContent = "0";
+    initialDisplay = true;
+}
+
+function backspace() {
+    tempValue = Number(tempValue.toString().slice(0, -1))
+    display.textContent = tempValue
+
+    if (tempValue === 0) {
+        initialDisplay = true
+    }
+
+    return tempValue
+}
+
 
 numberKeys.forEach(key => {
     
@@ -145,16 +176,17 @@ operateKeys.forEach(key => {
 
 percentKey.addEventListener("click", () => {
 
-    if (tempValue === 0) {
-        display.textContent = 0;
-    }
+    // if (tempValue === 0) {
+    //     display.textContent = 0;
+    // }
 
-    else {
-        tempValue /= 100;
-        display.textContent = tempValue;
-        return tempValue;
-    }
+    // else {
+    //     tempValue /= 100;
+    //     display.textContent = tempValue;
+    //     return tempValue;
+    // }
     
+    percentage()
 });
 
 equalKey.addEventListener("click", () => {
@@ -179,31 +211,31 @@ equalKey.addEventListener("click", () => {
 
 clearKey.addEventListener("click", () => {
 
-    firstValue = 0;
-    tempValue = 0;
-    operatorSymbol = "";
-    display.textContent = "0";
-    initialDisplay = true;
-
+    // firstValue = 0;
+    // tempValue = 0;
+    // operatorSymbol = "";
+    // display.textContent = "0";
+    // initialDisplay = true;
+    clear()
 })
 
 backspaceKey.addEventListener("click", () => {
 
-    tempValue = Number(tempValue.toString().slice(0, -1))
-    display.textContent = tempValue
+    // tempValue = Number(tempValue.toString().slice(0, -1))
+    // display.textContent = tempValue
 
-    if (tempValue === 0) {
-        initialDisplay = true
-    }
+    // if (tempValue === 0) {
+    //     initialDisplay = true
+    // }
 
-    return tempValue
-
+    // return tempValue
+    backspace()
 })
 
 
 window.addEventListener("keydown", (event) => {
     
-    if (event.key >= 0 && event.key <= 9) {
+    if ((event.key >= 0 && event.key <= 9) || event.key == ".") {
 
         // if (hasOperator) {
         //     display.textContent = ""
@@ -244,16 +276,55 @@ window.addEventListener("keydown", (event) => {
         return total
     }
 
-    if (event.key === "=" || event.key === "Enter") {
-        if (!tempValue && !operatorSymbol) {
-            display.textContent = 0;
-            return;
-        };
-
-        let total = calculate(pressedKeys[event.key])
-        equal(total)
-
-        return total
+    switch (event.key) {
+        case "=":
+        case "Enter" :
+            if (!tempValue && !operatorSymbol) {
+                display.textContent = 0;
+                return;
+            };
+    
+            let total = calculate(pressedKeys[event.key])
+            equal(total)
+    
+            break;
+    
+        case "Escape" :
+            clear()
+            break;
+        
+        case "%":
+            percentage()
+            break;
+    
+        case "Backspace":
+            backspace()
+            break;
+        }
     }
 
-})
+    // if (event.key === "=" || event.key === "Enter") {
+    //     if (!tempValue && !operatorSymbol) {
+    //         display.textContent = 0;
+    //         return;
+    //     };
+
+    //     let total = calculate(pressedKeys[event.key])
+    //     equal(total)
+
+    //     return total
+    // }
+
+    // else if (event.key === "Escape") {
+    //     clear()
+    // }
+
+    // else if (event.key === "%") {
+    //     percentage()
+    // }
+
+    // else if (event.key === "Backspace") {
+    //     backspace()
+    // }
+
+)
