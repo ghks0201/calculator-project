@@ -12,7 +12,14 @@ let operatorSymbol = "";
 let hasOperator = false;
 let hasTotal = false;
 let initialDisplay = true;
+let aValue = ""
 
+const pressedKeys = {
+    "+": "add",
+    "-": "subtract",
+    "*": "multiply",
+    "/": "divide",
+}
 
 function add(num1, num2) {
     return num1 + num2;
@@ -31,7 +38,8 @@ function divide(num1, num2) {
         const errorMsg = "Error!";
         return errorMsg;
     }
-    return Math.round(num1 / num2 * 100) / 100;
+    let result = Math.round(num1 / num2 * 100) / 100;
+    return result;
 };
 
 function operate(operatorFunc, num1, num2) {
@@ -42,24 +50,71 @@ function operate(operatorFunc, num1, num2) {
 };
 
 
+function checkOperator() {
+    if (hasOperator || hasTotal) {
+        display.textContent = "";
+        hasOperator = false;
+        hasTotal = false;
+    }
+    return;
+}
+
+function checkInitialDisplay() {
+    if ((display.textContent == 0) && initialDisplay) {
+        display.textContent = "";
+        initialDisplay = false; 
+    }
+    return;
+}
+
+function checkDisplayLength() {
+    if (display.textContent.length > 12) {
+        return;
+    }
+}
+
+function calculate(key) {
+    if (firstValue && tempValue) {
+        firstValue = operate(operatorSymbol, firstValue, tempValue)
+        console.log(firstValue)
+    }
+    else {
+        firstValue = tempValue;
+        tempValue = 0;
+    }
+    operatorSymbol = key;
+    hasOperator = true;
+    return firstValue;
+}
+
+function equal(total) {
+    hasTotal = true;
+    tempValue = total;
+    firstValue = 0;
+}
+
+
 numberKeys.forEach(key => {
     
     key.addEventListener("click", () => {
 
-        if (hasOperator || hasTotal) {
-            display.textContent = "";
-            hasOperator = false;
-            hasTotal = false;
-        }
+        // if (hasOperator || hasTotal) {
+        //     display.textContent = "";
+        //     hasOperator = false;
+        //     hasTotal = false;
+        // }
+        checkOperator();
 
-        if ((display.textContent == 0) && initialDisplay) {
-            display.textContent = "";
-            initialDisplay = false; 
-        }
+        // if ((display.textContent == 0) && initialDisplay) {
+        //     display.textContent = "";
+        //     initialDisplay = false; 
+        // }
+        checkInitialDisplay();
 
-        if (display.textContent.length > 12) {
-            return;
-        }
+        // if (display.textContent.length > 12) {
+        //     return;
+        // }
+        checkDisplayLength();
         
         display.textContent += key.textContent;
         tempValue = Number(display.textContent);
@@ -71,17 +126,19 @@ numberKeys.forEach(key => {
 operateKeys.forEach(key => {
     
     key.addEventListener("click", () => {
-        if (firstValue && tempValue) {
-            firstValue = operate(operatorSymbol, firstValue, tempValue)
-            console.log(firstValue)
-        }
-        else {
-            firstValue = tempValue;
-            tempValue = 0;
-        }
+        // if (firstValue && tempValue) {
+        //     firstValue = operate(operatorSymbol, firstValue, tempValue)
+        //     console.log(firstValue)
+        // }
+        // else {
+        //     firstValue = tempValue;
+        //     tempValue = 0;
+        // }
         
-        operatorSymbol = key.classList.item(2);
-        hasOperator = true;
+        // operatorSymbol = key.classList.item(2);
+        // hasOperator = true;
+        console.log(key)
+        calculate(key.classList.item(2));
     })
 
 })
@@ -107,13 +164,15 @@ equalKey.addEventListener("click", () => {
         return;
     };
 
-    let total = operate(operatorSymbol, firstValue, tempValue);
+    let total = calculate(operatorSymbol);
     
     console.log(total);
 
-    hasTotal = true;
-    tempValue = total;
-    firstValue = 0;
+    // hasTotal = true;
+    // tempValue = total;
+    // firstValue = 0;
+    equal(total);
+
     return total;
 
 })
@@ -138,5 +197,63 @@ backspaceKey.addEventListener("click", () => {
     }
 
     return tempValue
+
+})
+
+
+window.addEventListener("keydown", (event) => {
+    
+    if (event.key >= 0 && event.key <= 9) {
+
+        // if (hasOperator) {
+        //     display.textContent = ""
+        //     hasOperator = false
+        // }
+
+        // if ((display.textContent == 0) && initialDisplay) {
+        //     display.textContent = ""
+        //     initialDisplay = false
+        // }
+
+        checkOperator()
+        checkInitialDisplay()
+        checkInitialDisplay()
+
+        display.textContent += event.key
+        tempValue = Number(display.textContent)
+        console.log(tempValue)
+    }
+
+    if (event.key in pressedKeys) {
+
+        // operatorSymbol = pressedKeys[event.key]
+        // console.log(operatorSymbol)
+
+        // if (firstValue && tempValue) {
+        //     firstValue = operate(operatorSymbol, firstValue, tempValue)
+        //     console.log(firstValue)
+        // }
+
+        // console.log(event)
+        // firstValue = tempValue
+        // hasOperator = true
+
+
+        let total = calculate(pressedKeys[event.key])
+
+        return total
+    }
+
+    if (event.key === "=" || event.key === "Enter") {
+        if (!tempValue && !operatorSymbol) {
+            display.textContent = 0;
+            return;
+        };
+
+        let total = calculate(pressedKeys[event.key])
+        equal(total)
+
+        return total
+    }
 
 })
