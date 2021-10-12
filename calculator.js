@@ -1,7 +1,8 @@
+const allKeys = document.querySelectorAll(".key");
 const numberKeys = document.querySelectorAll(".number");
 const operateKeys = document.querySelectorAll(".operator")
 const display = document.querySelector(".display");
-const equalKey = document.querySelector(".clearEqual");
+const equalKey = document.querySelector(".equal");
 const clearKey = document.querySelector(".clear");
 const percentKey = document.querySelector(".percentage");
 const backspaceKey = document.querySelector(".backspace");
@@ -22,15 +23,18 @@ const pressedKeys = {
 }
 
 function add(num1, num2) {
-    return num1 + num2;
+    let result = Math.round((num1 + num2) * 10000) / 10000;
+    return result;
 };
 
 function subtract(num1, num2) {
-    return num1 - num2;
+    let result = Math.round((num1 - num2) * 10000) / 10000;
+    return result;
 };
 
 function multiply(num1, num2) {
-    return num1 * num2;
+    let result = Math.round((num1 * num2) * 10000) / 10000;
+    return result;
 };
 
 function divide(num1, num2) {
@@ -38,7 +42,7 @@ function divide(num1, num2) {
         const errorMsg = "Error!";
         return errorMsg;
     }
-    let result = Math.round(num1 / num2 * 100) / 100;
+    let result = Math.round(num1 / num2 * 10000) / 10000;
     return result;
 };
 
@@ -132,6 +136,20 @@ function backspace() {
     return tempValue
 }
 
+function animation(key) {
+    key.classList.add("clicked")
+
+    setTimeout(function() {
+        key.classList.remove("clicked")
+    }, 100)
+}
+
+allKeys.forEach(key => {
+    key.addEventListener("click", () => {
+        animation(key)
+    })
+})
+
 
 numberKeys.forEach(key => {
     
@@ -139,6 +157,14 @@ numberKeys.forEach(key => {
         checkOperator();
         checkInitialDisplay();
         checkDisplayLength(key.textContent);
+
+        if (display.textContent.includes(".")) {
+            document.getElementsByClassName("decimal")[0].disabled = true;
+        }
+        else {
+            document.getElementsByClassName("decimal")[0].disabled = false;
+        }
+        
     });
 
 });
@@ -179,10 +205,24 @@ backspaceKey.addEventListener("click", () => {
 
 
 window.addEventListener("keydown", (event) => {
+
+    animation(event.key)
     
     if ((event.key >= 0 && event.key <= 9) || event.key == ".") {
         checkOperator()
         checkInitialDisplay()
+
+        if (display.textContent.includes(".")) {
+            if (event.key == ".") {
+                display.textContent += ""
+                return
+            }
+            else {
+                checkDisplayLength(event.key)
+                return
+            }
+            
+        }
         checkDisplayLength(event.key)
     }
 

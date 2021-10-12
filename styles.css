@@ -68,3 +68,8 @@ h1 {
 .equal {
     background-color: blueviolet;
 }
+
+.clicked {
+    opacity: 0.5;
+    background-color: red;
+}
