@@ -7,35 +7,45 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Calculator</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="styles.css">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     </head>
     <body>
         <h1>Calculator</h1>
 
         <div class="calculator">
-            <div class="display"></div>
+            <div class="display">0</div>
             <div class="keys">
+                <button class="key special clear">C</button>
+                <button class="key special percentage">%</button>
+                <button class="key special backspace">⌫</button>
+                <button class="key operator divide">÷</button>
+
                 <button class="key number seven">7</button>
                 <button class="key number eight">8</button>
                 <button class="key number nine">9</button>
-                <button class="key clear">C</button>
+                <button class="key operator multiply">×</button>
+                
                 <button class="key number four">4</button>
                 <button class="key number five">5</button>
                 <button class="key number six">6</button>
-                <button class="key operator divide">÷</button>
+                <button class="key operator subtract">-</button>
+                
                 <button class="key number one">1</button>
                 <button class="key number two">2</button>
                 <button class="key number three">3</button>
-                <button class="key operator multiply">×</button>
-                <button class="key sign">+/-</button>
-                <button class="key number zero">0</button>
-                <button class="key point">.</button>
-                <button class="key operator subtract">-</button>
-                <button class="key equal">=</button>
                 <button class="key operator add">+</button>
+                
+                <button class="key number zero">0</button>
+                <button class="key number decimal">.</button>
+                <button class="key equal">=</button>
+                
             </div>
         </div>
         
