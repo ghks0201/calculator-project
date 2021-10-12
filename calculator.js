@@ -1,7 +1,7 @@
 const numberKeys = document.querySelectorAll(".number");
 const operateKeys = document.querySelectorAll(".operator")
 const display = document.querySelector(".display");
-const equalKey = document.querySelector(".equal");
+const equalKey = document.querySelector(".clearEqual");
 const clearKey = document.querySelector(".clear");
 const percentKey = document.querySelector(".percentage");
 const backspaceKey = document.querySelector(".backspace");
@@ -49,7 +49,7 @@ function operate(operatorFunc, num1, num2) {
     return total;
 };
 
-
+// Check if there is previous operator or has total calculated, if yes then clear the display
 function checkOperator() {
     if (hasOperator || hasTotal) {
         display.textContent = "";
@@ -59,6 +59,7 @@ function checkOperator() {
     return;
 }
 
+// Check if the initial display is 0, if yes then clear the display
 function checkInitialDisplay() {
     if ((display.textContent == 0) && initialDisplay) {
         display.textContent = "";
@@ -67,27 +68,33 @@ function checkInitialDisplay() {
     return;
 }
 
-function checkDisplayLength() {
-    if (display.textContent.length > 12) {
+// Check if display length is more than 12
+function checkDisplayLength(num) {
+    if (display.textContent.length >= 12) {
         return;
     }
+
+    display.textContent += num;
+    tempValue = Number(display.textContent);
 }
 
+// Function to pass in values and operator symbol to carry out calculations
 function calculate(key) {
     if (firstValue && tempValue) {
         firstValue = operate(operatorSymbol, firstValue, tempValue)
-        console.log(firstValue)
     }
     else {
         firstValue = tempValue;
         tempValue = 0;
     }
+
     operatorSymbol = key;
     hasOperator = true;
     return firstValue;
 }
 
-function equal(total) {
+// Clear previous value when equal sign selected
+function clearEqual(total) {
     hasTotal = true;
     tempValue = total;
     firstValue = 0;
@@ -105,6 +112,7 @@ function percentage() {
     }
 }
 
+// Clear display when esc selected
 function clear() {
     firstValue = 0;
     tempValue = 0;
@@ -128,28 +136,9 @@ function backspace() {
 numberKeys.forEach(key => {
     
     key.addEventListener("click", () => {
-
-        // if (hasOperator || hasTotal) {
-        //     display.textContent = "";
-        //     hasOperator = false;
-        //     hasTotal = false;
-        // }
         checkOperator();
-
-        // if ((display.textContent == 0) && initialDisplay) {
-        //     display.textContent = "";
-        //     initialDisplay = false; 
-        // }
         checkInitialDisplay();
-
-        // if (display.textContent.length > 12) {
-        //     return;
-        // }
-        checkDisplayLength();
-        
-        display.textContent += key.textContent;
-        tempValue = Number(display.textContent);
-        console.log(tempValue)
+        checkDisplayLength(key.textContent);
     });
 
 });
@@ -157,37 +146,10 @@ numberKeys.forEach(key => {
 operateKeys.forEach(key => {
     
     key.addEventListener("click", () => {
-        // if (firstValue && tempValue) {
-        //     firstValue = operate(operatorSymbol, firstValue, tempValue)
-        //     console.log(firstValue)
-        // }
-        // else {
-        //     firstValue = tempValue;
-        //     tempValue = 0;
-        // }
-        
-        // operatorSymbol = key.classList.item(2);
-        // hasOperator = true;
-        console.log(key)
         calculate(key.classList.item(2));
     })
 
 })
-
-percentKey.addEventListener("click", () => {
-
-    // if (tempValue === 0) {
-    //     display.textContent = 0;
-    // }
-
-    // else {
-    //     tempValue /= 100;
-    //     display.textContent = tempValue;
-    //     return tempValue;
-    // }
-    
-    percentage()
-});
 
 equalKey.addEventListener("click", () => {
 
@@ -197,38 +159,21 @@ equalKey.addEventListener("click", () => {
     };
 
     let total = calculate(operatorSymbol);
-    
-    console.log(total);
-
-    // hasTotal = true;
-    // tempValue = total;
-    // firstValue = 0;
-    equal(total);
+    clearEqual(total);
 
     return total;
 
 })
 
-clearKey.addEventListener("click", () => {
+percentKey.addEventListener("click", () => {
+    percentage()
+});
 
-    // firstValue = 0;
-    // tempValue = 0;
-    // operatorSymbol = "";
-    // display.textContent = "0";
-    // initialDisplay = true;
+clearKey.addEventListener("click", () => {
     clear()
 })
 
 backspaceKey.addEventListener("click", () => {
-
-    // tempValue = Number(tempValue.toString().slice(0, -1))
-    // display.textContent = tempValue
-
-    // if (tempValue === 0) {
-    //     initialDisplay = true
-    // }
-
-    // return tempValue
     backspace()
 })
 
@@ -236,43 +181,13 @@ backspaceKey.addEventListener("click", () => {
 window.addEventListener("keydown", (event) => {
     
     if ((event.key >= 0 && event.key <= 9) || event.key == ".") {
-
-        // if (hasOperator) {
-        //     display.textContent = ""
-        //     hasOperator = false
-        // }
-
-        // if ((display.textContent == 0) && initialDisplay) {
-        //     display.textContent = ""
-        //     initialDisplay = false
-        // }
-
         checkOperator()
         checkInitialDisplay()
-        checkInitialDisplay()
-
-        display.textContent += event.key
-        tempValue = Number(display.textContent)
-        console.log(tempValue)
+        checkDisplayLength(event.key)
     }
 
     if (event.key in pressedKeys) {
-
-        // operatorSymbol = pressedKeys[event.key]
-        // console.log(operatorSymbol)
-
-        // if (firstValue && tempValue) {
-        //     firstValue = operate(operatorSymbol, firstValue, tempValue)
-        //     console.log(firstValue)
-        // }
-
-        // console.log(event)
-        // firstValue = tempValue
-        // hasOperator = true
-
-
         let total = calculate(pressedKeys[event.key])
-
         return total
     }
 
@@ -285,7 +200,7 @@ window.addEventListener("keydown", (event) => {
             };
     
             let total = calculate(pressedKeys[event.key])
-            equal(total)
+            clearEqual(total)
     
             break;
     
@@ -302,29 +217,5 @@ window.addEventListener("keydown", (event) => {
             break;
         }
     }
-
-    // if (event.key === "=" || event.key === "Enter") {
-    //     if (!tempValue && !operatorSymbol) {
-    //         display.textContent = 0;
-    //         return;
-    //     };
-
-    //     let total = calculate(pressedKeys[event.key])
-    //     equal(total)
-
-    //     return total
-    // }
-
-    // else if (event.key === "Escape") {
-    //     clear()
-    // }
-
-    // else if (event.key === "%") {
-    //     percentage()
-    // }
-
-    // else if (event.key === "Backspace") {
-    //     backspace()
-    // }
 
 )
