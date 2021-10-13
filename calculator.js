@@ -6,14 +6,16 @@ const equalKey = document.querySelector(".equal");
 const clearKey = document.querySelector(".clear");
 const percentKey = document.querySelector(".percentage");
 const backspaceKey = document.querySelector(".backspace");
+const errorMsg = "Error!";
 
-let tempValue = 0;
-let firstValue = 0;
+let tempValue = null;
+let firstValue = null;
 let operatorSymbol = "";
 let hasOperator = false;
 let hasTotal = false;
 let initialDisplay = true;
 let aValue = ""
+let firstValueEntered = false;
 
 const pressedKeys = {
     "+": "add",
@@ -39,11 +41,13 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
     if (num2 === 0) {
-        const errorMsg = "Error!";
         return errorMsg;
     }
-    let result = Math.round(num1 / num2 * 10000) / 10000;
-    return result;
+    else {
+        let result = Math.round(num1 / num2 * 10000) / 10000;
+        return result;
+    }
+    
 };
 
 function operate(operatorFunc, num1, num2) {
@@ -78,18 +82,37 @@ function checkDisplayLength(num) {
         return;
     }
 
-    display.textContent += num;
-    tempValue = Number(display.textContent);
+    if (display.textContent.length >= 1) {
+        if (num == 0 && display.textContent[0] == 0) {
+            return;
+        }
+        else {
+            display.textContent += num;
+            tempValue = Number(display.textContent);
+        }
+    }
+    else {
+        display.textContent += num;
+        tempValue = Number(display.textContent);
+    }
+
 }
 
 // Function to pass in values and operator symbol to carry out calculations
 function calculate(key) {
     if (firstValue && tempValue) {
-        firstValue = operate(operatorSymbol, firstValue, tempValue)
+        firstValue = operate(operatorSymbol, firstValue, tempValue)   
     }
+
+    else if ((firstValue === 0 || tempValue === 0) && firstValueEntered) {
+        firstValue = operate(operatorSymbol, firstValue, tempValue) 
+        firstValueEntered = false
+    }
+
     else {
         firstValue = tempValue;
-        tempValue = 0;
+        tempValue = null;
+        firstValueEntered = true
     }
 
     operatorSymbol = key;
@@ -157,7 +180,7 @@ numberKeys.forEach(key => {
         checkOperator();
         checkInitialDisplay();
         checkDisplayLength(key.textContent);
-
+    
         if (display.textContent.includes(".")) {
             document.getElementsByClassName("decimal")[0].disabled = true;
         }
@@ -206,11 +229,17 @@ backspaceKey.addEventListener("click", () => {
 
 window.addEventListener("keydown", (event) => {
 
-    animation(event.key)
-    
     if ((event.key >= 0 && event.key <= 9) || event.key == ".") {
         checkOperator()
         checkInitialDisplay()
+
+        let selectedKey = event.key
+        
+        for (let i = 0; i < allKeys.length; i++) {
+            if (selectedKey == allKeys[i].textContent) {
+                animation(allKeys[i])
+            }
+        }
 
         if (display.textContent.includes(".")) {
             if (event.key == ".") {
@@ -219,15 +248,23 @@ window.addEventListener("keydown", (event) => {
             }
             else {
                 checkDisplayLength(event.key)
+                animation(document.querySelector(".decimal"))
                 return
             }
             
         }
-        checkDisplayLength(event.key)
+
+        checkDisplayLength(event.key);
     }
 
     if (event.key in pressedKeys) {
         let total = calculate(pressedKeys[event.key])
+
+        for (let i = 0; i < operateKeys.length; i++) {
+            if (event.key === operateKeys[i].textContent) {
+                animation(operateKeys[i])
+            }
+        }
         return total
     }
 
@@ -236,24 +273,29 @@ window.addEventListener("keydown", (event) => {
         case "Enter" :
             if (!tempValue && !operatorSymbol) {
                 display.textContent = 0;
+                animation(equalKey)
                 return;
             };
     
             let total = calculate(pressedKeys[event.key])
+            animation(equalKey)
             clearEqual(total)
     
             break;
     
         case "Escape" :
             clear()
+            animation(clearKey)
             break;
         
         case "%":
             percentage()
+            animation(percentKey)
             break;
     
         case "Backspace":
             backspace()
+            animation(backspaceKey)
             break;
         }
     }
