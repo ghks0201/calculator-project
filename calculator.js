@@ -66,9 +66,14 @@ function operate(operatorFunc, num1, num2) {
 
 // Check if there is previous operator or has total calculated, if yes then clear the currentDisplay
 function checkOperator() {
-    if (hasOperator || hasTotal) {
+    if (hasOperator) {
         currentDisplay.textContent = "";
         hasOperator = false;
+        
+    }
+
+    if (hasTotal) {
+        previousDisplay.textContent = ""
         hasTotal = false;
     }
     return;
@@ -107,8 +112,6 @@ function checkDisplayLength(num) {
 
 // Function to pass in values and operator symbol to carry out calculations
 function calculate(key) {
-    
-
     if (firstValue && tempValue) {
         firstValue = operate(operatorSymbol, firstValue, tempValue)   
     }
@@ -118,12 +121,14 @@ function calculate(key) {
         firstValueEntered = false
     }
 
-    else {
+    else  {
         firstValue = tempValue;
         tempValue = null;
+        
         firstValueEntered = true
     }
 
+    console.log("first:" + firstValue + " temp:" + tempValue + " " + operatorSymbol)
     operatorSymbol = key;
     hasOperator = true;
     return firstValue;
@@ -133,8 +138,8 @@ function calculate(key) {
 function clearEqual(total) {
     hasTotal = true;
     tempValue = total;
-    console.log(operatorSymbol)
-    firstValue = 0;
+    firstValue = null;
+    operatorSymbol = ""
 }
 
 function percentage() {
@@ -151,8 +156,8 @@ function percentage() {
 
 // Clear currentDisplay when esc selected
 function clear() {
-    firstValue = 0;
-    tempValue = 0;
+    firstValue = null;
+    tempValue = null;
     operatorSymbol = "";
     previousDisplay.textContent = "";
     currentDisplay.textContent = "0";
@@ -206,9 +211,16 @@ numberKeys.forEach(key => {
 operateKeys.forEach(key => {
     
     key.addEventListener("click", () => {
+        if (hasTotal) {
+            previousDisplay.textContent = ""
+            hasTotal = false
+        }
         
         previousDisplay.textContent += `${tempValue} ${key.textContent} `
-        calculate(key.classList.item(2));
+
+        if (key.textContent != "=") {
+            calculate(key.classList.item(2));
+        }
     })
 
 })
@@ -271,6 +283,12 @@ window.addEventListener("keydown", (event) => {
     }
 
     if (event.key in pressedKeys) {
+        if (hasTotal) {
+            previousDisplay.textContent = ""
+            hasTotal = false
+        }
+        
+        previousDisplay.textContent += `${tempValue} ${event.key} `
         let total = calculate(pressedKeys[event.key])
 
         for (let i = 0; i < operateKeys.length; i++) {
@@ -284,6 +302,10 @@ window.addEventListener("keydown", (event) => {
     switch (event.key) {
         case "=":
         case "Enter" :
+            if (!hasTotal) {
+                previousDisplay.textContent += `${tempValue} =`
+            }
+            
             if (!tempValue && !operatorSymbol) {
                 currentDisplay.textContent = 0;
                 animation(equalKey)
