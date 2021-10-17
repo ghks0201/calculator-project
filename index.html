@@ -15,39 +15,53 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+        <script src="https://kit.fontawesome.com/dae5327eea.js" crossorigin="anonymous"></script>
     </head>
     <body>
-        <h1>A Simple Calculator</h1>
+        <main>
+            <h1>A Simple Calculator</h1>
 
-        <div class="calculator">
-            <div class="display">0</div>
-            <div class="keys">
-                <button class="key special clear">C</button>
-                <button class="key special percentage">%</button>
-                <button class="key special backspace">⌫</button>
-                <button class="key operator divide">/</button>
+            <div class="calculator">
+                <div class="display">
+                    <div class="previous-display"></div>
+                    <div class="current-display">0</div>
+                </div>
+                
+                <div class="keys">
+                    <button class="key special clear">C</button>
+                    <button class="key special percentage">%</button>
+                    <button class="key special backspace">⌫</button>
+                    <button class="key operator divide">/</button>
 
-                <button class="key number seven">7</button>
-                <button class="key number eight">8</button>
-                <button class="key number nine">9</button>
-                <button class="key operator multiply">*</button>
-                
-                <button class="key number four">4</button>
-                <button class="key number five">5</button>
-                <button class="key number six">6</button>
-                <button class="key operator subtract">-</button>
-                
-                <button class="key number one">1</button>
-                <button class="key number two">2</button>
-                <button class="key number three">3</button>
-                <button class="key operator add">+</button>
-                
-                <button class="key number zero">0</button>
-                <button class="key number decimal">.</button>
-                <button class="key equal">=</button>
-                
+                    <button class="key number seven">7</button>
+                    <button class="key number eight">8</button>
+                    <button class="key number nine">9</button>
+                    <button class="key operator multiply">*</button>
+                    
+                    <button class="key number four">4</button>
+                    <button class="key number five">5</button>
+                    <button class="key number six">6</button>
+                    <button class="key operator subtract">-</button>
+                    
+                    <button class="key number one">1</button>
+                    <button class="key number two">2</button>
+                    <button class="key number three">3</button>
+                    <button class="key operator add">+</button>
+                    
+                    <button class="key number zero">0</button>
+                    <button class="key number decimal">.</button>
+                    <button class="key operator equal">=</button>
+                    
+                </div>
             </div>
-        </div>
+        </main>
+        
+
+        <footer>
+            <p>© 2021 ghks0201</p>
+            <a href="https://github.com/ghks0201"><i class="fab fa-github"></i></a>
+        </footer>
         
         <script src="calculator.js" async defer></script>
     </body>

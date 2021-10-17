@@ -1,7 +1,8 @@
 const allKeys = document.querySelectorAll(".key");
 const numberKeys = document.querySelectorAll(".number");
-const operateKeys = document.querySelectorAll(".operator")
-const display = document.querySelector(".display");
+const operateKeys = document.querySelectorAll(".operator");
+const previousDisplay = document.querySelector(".previous-display");
+const currentDisplay = document.querySelector(".current-display");
 const equalKey = document.querySelector(".equal");
 const clearKey = document.querySelector(".clear");
 const percentKey = document.querySelector(".percentage");
@@ -14,8 +15,9 @@ let operatorSymbol = "";
 let hasOperator = false;
 let hasTotal = false;
 let initialDisplay = true;
-let aValue = ""
+let displayText = "";
 let firstValueEntered = false;
+
 
 const pressedKeys = {
     "+": "add",
@@ -51,49 +53,59 @@ function divide(num1, num2) {
 };
 
 function operate(operatorFunc, num1, num2) {
-    let total = window[operatorFunc](num1, num2);
-    display.textContent = total;
+    console.log(operatorFunc)
+    if (operatorFunc != "equal") {
+        let total = window[operatorFunc](num1, num2);
+        console.log(total)
+        currentDisplay.textContent = total;
 
-    return total;
+        return total;
+    }
+    
 };
 
-// Check if there is previous operator or has total calculated, if yes then clear the display
+// Check if there is previous operator or has total calculated, if yes then clear the currentDisplay
 function checkOperator() {
-    if (hasOperator || hasTotal) {
-        display.textContent = "";
+    if (hasOperator) {
+        currentDisplay.textContent = "";
         hasOperator = false;
+        
+    }
+
+    if (hasTotal) {
+        previousDisplay.textContent = ""
         hasTotal = false;
     }
     return;
 }
 
-// Check if the initial display is 0, if yes then clear the display
+// Check if the initial currentDisplay is 0, if yes then clear the currentDisplay
 function checkInitialDisplay() {
-    if ((display.textContent == 0) && initialDisplay) {
-        display.textContent = "";
+    if ((currentDisplay.textContent == 0) && initialDisplay) {
+        currentDisplay.textContent = "";
         initialDisplay = false; 
     }
     return;
 }
 
-// Check if display length is more than 12
+// Check if currentDisplay length is more than 12
 function checkDisplayLength(num) {
-    if (display.textContent.length >= 12) {
+    if (currentDisplay.textContent.length >= 12) {
         return;
     }
 
-    if (display.textContent.length >= 1) {
-        if (num == 0 && display.textContent[0] == 0) {
+    if (currentDisplay.textContent.length >= 1) {
+        if (num == 0 && currentDisplay.textContent[0] == 0) {
             return;
         }
         else {
-            display.textContent += num;
-            tempValue = Number(display.textContent);
+            currentDisplay.textContent += num;
+            tempValue = Number(currentDisplay.textContent);
         }
     }
     else {
-        display.textContent += num;
-        tempValue = Number(display.textContent);
+        currentDisplay.textContent += num;
+        tempValue = Number(currentDisplay.textContent);
     }
 
 }
@@ -109,12 +121,14 @@ function calculate(key) {
         firstValueEntered = false
     }
 
-    else {
+    else  {
         firstValue = tempValue;
         tempValue = null;
+        
         firstValueEntered = true
     }
 
+    console.log("first:" + firstValue + " temp:" + tempValue + " " + operatorSymbol)
     operatorSymbol = key;
     hasOperator = true;
     return firstValue;
@@ -124,33 +138,35 @@ function calculate(key) {
 function clearEqual(total) {
     hasTotal = true;
     tempValue = total;
-    firstValue = 0;
+    firstValue = null;
+    operatorSymbol = ""
 }
 
 function percentage() {
     if (tempValue === 0) {
-        display.textContent = 0;
+        currentDisplay.textContent = 0;
     }
 
     else {
         tempValue /= 100;
-        display.textContent = tempValue;
+        currentDisplay.textContent = tempValue;
         return tempValue;
     }
 }
 
-// Clear display when esc selected
+// Clear currentDisplay when esc selected
 function clear() {
-    firstValue = 0;
-    tempValue = 0;
+    firstValue = null;
+    tempValue = null;
     operatorSymbol = "";
-    display.textContent = "0";
+    previousDisplay.textContent = "";
+    currentDisplay.textContent = "0";
     initialDisplay = true;
 }
 
 function backspace() {
     tempValue = Number(tempValue.toString().slice(0, -1))
-    display.textContent = tempValue
+    currentDisplay.textContent = tempValue
 
     if (tempValue === 0) {
         initialDisplay = true
@@ -181,7 +197,7 @@ numberKeys.forEach(key => {
         checkInitialDisplay();
         checkDisplayLength(key.textContent);
     
-        if (display.textContent.includes(".")) {
+        if (currentDisplay.textContent.includes(".")) {
             document.getElementsByClassName("decimal")[0].disabled = true;
         }
         else {
@@ -195,7 +211,16 @@ numberKeys.forEach(key => {
 operateKeys.forEach(key => {
     
     key.addEventListener("click", () => {
-        calculate(key.classList.item(2));
+        if (hasTotal) {
+            previousDisplay.textContent = ""
+            hasTotal = false
+        }
+        
+        previousDisplay.textContent += `${tempValue} ${key.textContent} `
+
+        if (key.textContent != "=") {
+            calculate(key.classList.item(2));
+        }
     })
 
 })
@@ -203,7 +228,7 @@ operateKeys.forEach(key => {
 equalKey.addEventListener("click", () => {
 
     if (!tempValue && !operatorSymbol) {
-        display.textContent = 0;
+        currentDisplay.textContent = 0;
         return;
     };
 
@@ -241,9 +266,9 @@ window.addEventListener("keydown", (event) => {
             }
         }
 
-        if (display.textContent.includes(".")) {
+        if (currentDisplay.textContent.includes(".")) {
             if (event.key == ".") {
-                display.textContent += ""
+                currentDisplay.textContent += ""
                 return
             }
             else {
@@ -258,6 +283,12 @@ window.addEventListener("keydown", (event) => {
     }
 
     if (event.key in pressedKeys) {
+        if (hasTotal) {
+            previousDisplay.textContent = ""
+            hasTotal = false
+        }
+        
+        previousDisplay.textContent += `${tempValue} ${event.key} `
         let total = calculate(pressedKeys[event.key])
 
         for (let i = 0; i < operateKeys.length; i++) {
@@ -271,8 +302,12 @@ window.addEventListener("keydown", (event) => {
     switch (event.key) {
         case "=":
         case "Enter" :
+            if (!hasTotal) {
+                previousDisplay.textContent += `${tempValue} =`
+            }
+            
             if (!tempValue && !operatorSymbol) {
-                display.textContent = 0;
+                currentDisplay.textContent = 0;
                 animation(equalKey)
                 return;
             };
